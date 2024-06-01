@@ -98,7 +98,7 @@ func main() {
 	// Initialize the Snake struct fields
 	ilan.Health = 1
 	ilan.Position_x = 6
-	ilan.Position_y = 10
+	ilan.Position_y = 13
 	// Print the coordinates and health of the snake
 	fmt.Printf("Ilanin Kordinatlari %d, %d Cani: %d\n", ilan.Position_x, ilan.Position_y, ilan.Health)
 
@@ -128,6 +128,9 @@ func main() {
 				Ilan_move_left(&ilan)
 				if ilan.Position_x == 0 || ilan.Position_x == xerite.width-1 || ilan.Position_y == 0 || ilan.Position_y == xerite.height-1 {
 					Game_loop = false
+				} else if ilan.Position_x == Fruit.Position_x && ilan.Position_y == Fruit.Position_y {
+					Fruit.Relocation()
+					ilan.Health++
 				} else {
 					fmt.Printf("Ilanin Kordinatlari %d, %d Cani: %d\n", ilan.Position_x, ilan.Position_y, ilan.Health)
 					xerite.draw(ilan.Position_x, ilan.Position_y, Fruit.Position_x, Fruit.Position_y)
@@ -136,6 +139,9 @@ func main() {
 				Ilan_move_down(&ilan)
 				if ilan.Position_x == 0 || ilan.Position_x == xerite.width-1 || ilan.Position_y == 0 || ilan.Position_y == xerite.height-1 {
 					Game_loop = false
+				} else if ilan.Position_x == Fruit.Position_x && ilan.Position_y == Fruit.Position_y {
+					Fruit.Relocation()
+					ilan.Health++
 				} else {
 					fmt.Printf("Ilanin Kordinatlari %d, %d Cani: %d\n", ilan.Position_x, ilan.Position_y, ilan.Health)
 					xerite.draw(ilan.Position_x, ilan.Position_y, Fruit.Position_x, Fruit.Position_y)
@@ -144,6 +150,9 @@ func main() {
 				ilan.Ilan_move_up()
 				if ilan.Position_x == 0 || ilan.Position_x == xerite.width-1 || ilan.Position_y == 0 || ilan.Position_y == xerite.height-1 {
 					Game_loop = false
+				} else if ilan.Position_x == Fruit.Position_x && ilan.Position_y == Fruit.Position_y {
+					Fruit.Relocation()
+					ilan.Health++
 				} else {
 					fmt.Printf("Ilanin Kordinatlari %d, %d Cani: %d\n", ilan.Position_x, ilan.Position_y, ilan.Health)
 					xerite.draw(ilan.Position_x, ilan.Position_y, Fruit.Position_x, Fruit.Position_y)
@@ -152,6 +161,9 @@ func main() {
 				Ilan_move_right(&ilan)
 				if ilan.Position_x == 0 || ilan.Position_x == xerite.width-1 || ilan.Position_y == 0 || ilan.Position_y == xerite.height-1 {
 					Game_loop = false
+				} else if ilan.Position_x == Fruit.Position_x && ilan.Position_y == Fruit.Position_y {
+					Fruit.Relocation()
+					ilan.Health++
 				} else {
 					fmt.Printf("Ilanin Kordinatlari %d, %d Cani: %d\n", ilan.Position_x, ilan.Position_y, ilan.Health)
 					xerite.draw(ilan.Position_x, ilan.Position_y, Fruit.Position_x, Fruit.Position_y)
