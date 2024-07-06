@@ -1,29 +1,27 @@
 package main
 
 import (
-	"fmt"
-	"math/rand/v2"
+	"math/rand"
 	"time"
+
+	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
-//-------------------------------Ilana Aid---------------------------------------
+//-------------------------------Ilana Aid------------------------------------
 
-// Define the Snake struct with Health, Position_x, and Position_y fields
+// Ilanin Health ve x,y pozisyalari
 type Snake struct {
 	Health     uint
 	Position_x int
 	Position_y int
 }
 
-// Belede Cagirmaq olar
 func (snake *Snake) Ilan_move_up() {
-	snake.Position_y++
+	snake.Position_y--
 }
 
-// Ilanin Gezme Funksiyalari
-
 func Ilan_move_down(ilan *Snake) {
-	ilan.Position_y--
+	ilan.Position_y++
 }
 
 func Ilan_move_right(ilan *Snake) {
@@ -34,147 +32,105 @@ func Ilan_move_left(ilan *Snake) {
 	ilan.Position_x--
 }
 
-/*
-	func NewSnake(hp uint, p_x uint, p_y uint) *Snake {
-		return &Snake{
-			Health:     hp,
-			Position_x: p_x,
-			Position_y: p_y,
-		}
-	}
+func (s *Snake) draw(cellSize float32) {
+	rl.DrawRectangle(int32(float32(s.Position_x)*cellSize), int32(float32(s.Position_y)*cellSize), int32(cellSize), int32(cellSize), rl.Green)
+}
 
-ilan := NewSnake(1,6,5)
-*/
 //-------------------------------Ilana Aid------------------------------------
+
 //-------------------------------Meyve----------------------------------------
+
+// Define the Meyve struct with Position_x and Position_y fields
 type Meyve struct {
 	Position_x int
 	Position_y int
 }
 
-func (meyve *Meyve) Relocation() {
-	meyve.Position_x = rand.IntN(30)
-	meyve.Position_y = rand.IntN(15)
+func (m *Meyve) draw(cellSize float32) {
+	rl.DrawRectangle(int32(float32(m.Position_x)*cellSize), int32(float32(m.Position_y)*cellSize), int32(cellSize), int32(cellSize), rl.Red)
+}
+
+func (m *Meyve) Relocation() {
+	m.Position_x = rand.Intn(15)
+	m.Position_y = rand.Intn(30)
 }
 
 //-------------------------------Meyve----------------------------------------
-//-------------------------------Xerite---------------------------------------
-
-type Map struct {
-	width  int
-	height int
-}
-
-func (m *Map) draw(x int, y int, fx int, fy int) {
-
-	for i := 0; i < m.height; i++ {
-		for j := 0; j < m.width; j++ {
-			if (i == 0 || i == m.height-1) || (j == 0 || j == m.width-1) {
-				fmt.Print("*")
-			} else if i == y && j == x {
-				fmt.Print("A")
-			} else if i == fy && j == fx {
-				fmt.Print("F")
-			} else {
-				fmt.Print(" ")
-			}
-		}
-		fmt.Println()
-	}
-}
-
-//-------------------------------Xerite---------------------------------------
 
 func main() {
+	rl.InitWindow(800, 450, "raylib [core] example - basic window")
+	defer rl.CloseWindow()
 
-	//Deckleration og Fruit
-	var Fruit Meyve
-	Fruit.Position_x = 7
-	Fruit.Position_y = 4
-	//Deckleration of time
-	interval := 1 * time.Second
-	// Declare a variable of type Snake
-	var ilan Snake
-	// Initialize the Snake struct fields
-	ilan.Health = 1
-	ilan.Position_x = 6
-	ilan.Position_y = 13
-	// Print the coordinates and health of the snake
-	fmt.Printf("Ilanin Kordinatlari %d, %d Cani: %d\n", ilan.Position_x, ilan.Position_y, ilan.Health)
+	rl.SetTargetFPS(60)
+	rand.Seed(time.Now().UnixNano())
 
-	// Declare a map for drawing
-	var xerite Map
-	xerite.height = 15
-	xerite.width = 30
-	xerite.draw(ilan.Position_x, ilan.Position_y, Fruit.Position_x, Fruit.Position_y)
-	var Game_loop bool
-	Game_loop = true
+	cellSize := float32(rl.GetScreenHeight()) / 20.0
 
-	input_esas := make(chan rune)
-	go func() {
-		for {
-			//time.Sleep(1 * time.Second)
-			var keyboard_input rune
-			fmt.Scanf("%c", &keyboard_input)
-			input_esas <- keyboard_input
+	ilan := Snake{Health: 0, Position_x: 10, Position_y: 10}
+	meyve := Meyve{Position_x: 14, Position_y: 15}
+	/*
+		if ilan.Position_x == 0 || ilan.Position_x == xerite.width-1 || ilan.Position_y == 0 || ilan.Position_y == xerite.height-1 {
+			Game_loop = false
+		} else if ilan.Position_x == Fruit.Position_x && ilan.Position_y == Fruit.Position_y {
+			Fruit.Relocation()
+			ilan.Health++
 		}
-	}()
-
-	go func() {
-		for Game_loop {
-			//time.Sleep(1 * time.Second)
-			switch <-input_esas {
-			case 'a':
-				Ilan_move_left(&ilan)
-				if ilan.Position_x == 0 || ilan.Position_x == xerite.width-1 || ilan.Position_y == 0 || ilan.Position_y == xerite.height-1 {
-					Game_loop = false
-				} else if ilan.Position_x == Fruit.Position_x && ilan.Position_y == Fruit.Position_y {
-					Fruit.Relocation()
-					ilan.Health++
-				} else {
-					fmt.Printf("Ilanin Kordinatlari %d, %d Cani: %d\n", ilan.Position_x, ilan.Position_y, ilan.Health)
-					xerite.draw(ilan.Position_x, ilan.Position_y, Fruit.Position_x, Fruit.Position_y)
-				}
-			case 'w':
-				Ilan_move_down(&ilan)
-				if ilan.Position_x == 0 || ilan.Position_x == xerite.width-1 || ilan.Position_y == 0 || ilan.Position_y == xerite.height-1 {
-					Game_loop = false
-				} else if ilan.Position_x == Fruit.Position_x && ilan.Position_y == Fruit.Position_y {
-					Fruit.Relocation()
-					ilan.Health++
-				} else {
-					fmt.Printf("Ilanin Kordinatlari %d, %d Cani: %d\n", ilan.Position_x, ilan.Position_y, ilan.Health)
-					xerite.draw(ilan.Position_x, ilan.Position_y, Fruit.Position_x, Fruit.Position_y)
-				}
-			case 's':
-				ilan.Ilan_move_up()
-				if ilan.Position_x == 0 || ilan.Position_x == xerite.width-1 || ilan.Position_y == 0 || ilan.Position_y == xerite.height-1 {
-					Game_loop = false
-				} else if ilan.Position_x == Fruit.Position_x && ilan.Position_y == Fruit.Position_y {
-					Fruit.Relocation()
-					ilan.Health++
-				} else {
-					fmt.Printf("Ilanin Kordinatlari %d, %d Cani: %d\n", ilan.Position_x, ilan.Position_y, ilan.Health)
-					xerite.draw(ilan.Position_x, ilan.Position_y, Fruit.Position_x, Fruit.Position_y)
-				}
-			case 'd':
-				Ilan_move_right(&ilan)
-				if ilan.Position_x == 0 || ilan.Position_x == xerite.width-1 || ilan.Position_y == 0 || ilan.Position_y == xerite.height-1 {
-					Game_loop = false
-				} else if ilan.Position_x == Fruit.Position_x && ilan.Position_y == Fruit.Position_y {
-					Fruit.Relocation()
-					ilan.Health++
-				} else {
-					fmt.Printf("Ilanin Kordinatlari %d, %d Cani: %d\n", ilan.Position_x, ilan.Position_y, ilan.Health)
-					xerite.draw(ilan.Position_x, ilan.Position_y, Fruit.Position_x, Fruit.Position_y)
-				}
-			case 'q':
-				Game_loop = false
+	*/
+	var GameLoop bool = true
+	for !rl.WindowShouldClose() && GameLoop {
+		// Handle user input
+		if rl.IsKeyPressed(rl.KeyUp) {
+			ilan.Ilan_move_up()
+			if ilan.Position_x == 0 || ilan.Position_x == rl.GetScreenWidth()-1 || ilan.Position_y == 0 || ilan.Position_y == rl.GetScreenHeight()-1 {
+				GameLoop = false
+			} else if ilan.Position_x == meyve.Position_x && ilan.Position_y == meyve.Position_y {
+				meyve.Relocation()
+				ilan.Health++
 			}
-
+		}
+		if rl.IsKeyPressed(rl.KeyDown) {
+			Ilan_move_down(&ilan)
+			if ilan.Position_x == 0 || ilan.Position_x == rl.GetScreenWidth()-1 || ilan.Position_y == 0 || ilan.Position_y == rl.GetScreenHeight()-1 {
+				GameLoop = false
+			} else if ilan.Position_x == meyve.Position_x && ilan.Position_y == meyve.Position_y {
+				meyve.Relocation()
+				ilan.Health++
+			}
+		}
+		if rl.IsKeyPressed(rl.KeyRight) {
+			Ilan_move_right(&ilan)
+			if ilan.Position_x == 0 || ilan.Position_x == rl.GetScreenWidth()-1 || ilan.Position_y == 0 || ilan.Position_y == rl.GetScreenHeight()-1 {
+				GameLoop = false
+			} else if ilan.Position_x == meyve.Position_x && ilan.Position_y == meyve.Position_y {
+				meyve.Relocation()
+				ilan.Health++
+			}
+		}
+		if rl.IsKeyPressed(rl.KeyLeft) {
+			Ilan_move_left(&ilan)
+			if ilan.Position_x == 0 || ilan.Position_x == rl.GetScreenWidth()-1 || ilan.Position_y == 0 || ilan.Position_y == rl.GetScreenHeight()-1 {
+				GameLoop = false
+			} else if ilan.Position_x == meyve.Position_x && ilan.Position_y == meyve.Position_y {
+				meyve.Relocation()
+				ilan.Health++
+			}
 		}
 
-	}()
-	time.Sleep(100 * interval)
-	fmt.Println("Game Over")
-}
+		rl.BeginDrawing()
+
+		rl.ClearBackground(rl.RayWhite)
+
+		// Meyve ve Ilani cekmek ucun.
+		ilan.draw(cellSize)
+		meyve.draw(cellSize)
+		//rl.DrawText("Congrats! You created your first window!", 190, 200, 20, rl.LightGray)
+
+		rl.EndDrawing()
+	}
+
+	// Optional: Display a message before closing
+	rl.BeginDrawing()
+	rl.ClearBackground(rl.RayWhite)
+	rl.DrawText("Oyun Bitdi Siz Meglub Oldunuz...", 190, 200, 20, rl.Red)
+	rl.EndDrawing()
+	time.Sleep(2 * time.Second) // Yazini gostermek ucun 2 saniye gozlemek ucun
