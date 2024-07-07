@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"time"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -10,7 +11,7 @@ import (
 const (
 	Width    int32 = 800 // 20 ye bolende gelir dushur 40
 	Height   int32 = 460 // 20 ye bolende gelir dushur 23
-	GridSize int32 = 20
+	GridSize int32 = 20  // GridSize Teyin edirik
 )
 
 //-------------------------------Ilana Aid------------------------------------
@@ -45,6 +46,10 @@ func (s *Snake) draw() {
 
 //-------------------------------Ilana Aid------------------------------------
 
+//------------------------------Game Logic------------------------------------
+
+//------------------------------Game Logic------------------------------------
+
 //-------------------------------Meyve----------------------------------------
 
 // Define the Meyve struct with Position_x and Position_y fields
@@ -78,41 +83,26 @@ func main() {
 		// Handle user input
 		if rl.IsKeyPressed(rl.KeyUp) {
 			ilan.Ilan_move_up()
-			if ilan.Position_x < 0 || ilan.Position_x >= 40 || ilan.Position_y < 0 || ilan.Position_y >= 23 {
-				GameLoop = false
-			} else if ilan.Position_x == meyve.Position_x && ilan.Position_y == meyve.Position_y {
-				meyve.Relocation()
-				ilan.Health++
-			}
 		}
 		if rl.IsKeyPressed(rl.KeyDown) {
 			Ilan_move_down(&ilan)
-			if ilan.Position_x < 0 || ilan.Position_x >= 40 || ilan.Position_y < 0 || ilan.Position_y >= 23 {
-				GameLoop = false
-			} else if ilan.Position_x == meyve.Position_x && ilan.Position_y == meyve.Position_y {
-				meyve.Relocation()
-				ilan.Health++
-			}
 		}
 		if rl.IsKeyPressed(rl.KeyRight) {
 			Ilan_move_right(&ilan)
-			if ilan.Position_x < 0 || ilan.Position_x >= 40 || ilan.Position_y < 0 || ilan.Position_y >= 23 {
-				GameLoop = false
-			} else if ilan.Position_x == meyve.Position_x && ilan.Position_y == meyve.Position_y {
-				meyve.Relocation()
-				ilan.Health++
-			}
 		}
 		if rl.IsKeyPressed(rl.KeyLeft) {
 			Ilan_move_left(&ilan)
-			if ilan.Position_x < 0 || ilan.Position_x >= 40 || ilan.Position_y < 0 || ilan.Position_y >= 23 {
-				GameLoop = false
-			} else if ilan.Position_x == meyve.Position_x && ilan.Position_y == meyve.Position_y {
-				meyve.Relocation()
-				ilan.Health++
-			}
 		}
 		if rl.IsKeyPressed(rl.KeyQ) {
+			GameLoop = false
+		}
+		// Ilan Meyve Yedikce Boyuyur
+		if ilan.Position_x == meyve.Position_x && ilan.Position_y == meyve.Position_y {
+			meyve.Relocation()
+			ilan.Health++
+		}
+		// Ilanin Collisionu Divarla
+		if ilan.Position_x < 0 || ilan.Position_x >= 40 || ilan.Position_y < 0 || ilan.Position_y >= 23 {
 			GameLoop = false
 		}
 
@@ -123,7 +113,7 @@ func main() {
 		// Draw the snake and Fruit
 		ilan.draw()
 		meyve.draw()
-		//log.Println(meyve.Position_x, meyve.Position_y) //Debuger
+		log.Println(ilan.Health) //Debuger
 		rl.EndDrawing()
 	}
 
