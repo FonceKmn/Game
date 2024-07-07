@@ -9,9 +9,10 @@ import (
 )
 
 const (
-	Width    int32 = 800 // 20 ye bolende gelir dushur 40
-	Height   int32 = 460 // 20 ye bolende gelir dushur 23
-	GridSize int32 = 20  // GridSize Teyin edirik
+	Width          int32 = 800 // 20 ye bolende gelir dushur 40
+	Height         int32 = 460 // 20 ye bolende gelir dushur 23
+	GridSize       int32 = 20  // GridSize Teyin edirik
+	UpdateInterval       = 0.5 // yarim saniye
 )
 
 //-------------------------------Ilana Aid------------------------------------
@@ -21,7 +22,7 @@ type Snake struct {
 	Health     uint
 	Position_x int32
 	Position_y int32
-	Direction  int
+	Direction  int32
 }
 
 func (snake *Snake) Ilan_move_up() {
@@ -40,15 +41,24 @@ func Ilan_move_left(ilan *Snake) {
 	ilan.Position_x--
 }
 
+func (s *Snake) move() {
+	switch s.Direction {
+	case 1:
+		s.Ilan_move_up()
+	case 2:
+		Ilan_move_down(s)
+	case 3:
+		Ilan_move_right(s)
+	case 4:
+		Ilan_move_left(s)
+	}
+}
+
 func (s *Snake) draw() {
 	rl.DrawRectangle(s.Position_x*GridSize, s.Position_y*GridSize, GridSize, GridSize, rl.Green)
 }
 
 //-------------------------------Ilana Aid------------------------------------
-
-//------------------------------Game Logic------------------------------------
-
-//------------------------------Game Logic------------------------------------
 
 //-------------------------------Meyve----------------------------------------
 
@@ -75,34 +85,44 @@ func main() {
 
 	rl.SetTargetFPS(60)
 
-	ilan := Snake{Health: 0, Position_x: 10, Position_y: 10}
+	ilan := Snake{Health: 0, Position_x: 10, Position_y: 10, Direction: 1}
 	meyve := Meyve{Position_x: 14, Position_y: 15}
 
+	lastMoveTime := time.Now() // updateInterval ucun
 	var GameLoop bool = true
+
 	for !rl.WindowShouldClose() && GameLoop {
 		// Handle user input
-		if rl.IsKeyPressed(rl.KeyUp) {
-			ilan.Ilan_move_up()
+		if rl.IsKeyPressed(rl.KeyUp) && ilan.Direction != 2 {
+			ilan.Direction = 1
 		}
-		if rl.IsKeyPressed(rl.KeyDown) {
-			Ilan_move_down(&ilan)
+		if rl.IsKeyPressed(rl.KeyDown) && ilan.Direction != 1 {
+			ilan.Direction = 2
 		}
-		if rl.IsKeyPressed(rl.KeyRight) {
-			Ilan_move_right(&ilan)
+		if rl.IsKeyPressed(rl.KeyRight) && ilan.Direction != 4 {
+			ilan.Direction = 3
 		}
-		if rl.IsKeyPressed(rl.KeyLeft) {
-			Ilan_move_left(&ilan)
+		if rl.IsKeyPressed(rl.KeyLeft) && ilan.Direction != 3 {
+			ilan.Direction = 4
 		}
+
+		if time.Since(lastMoveTime).Seconds() >= UpdateInterval {
+			ilan.move()
+			lastMoveTime = time.Now()
+		}
+
 		if rl.IsKeyPressed(rl.KeyQ) {
 			GameLoop = false
 		}
+
 		// Ilan Meyve Yedikce Boyuyur
 		if ilan.Position_x == meyve.Position_x && ilan.Position_y == meyve.Position_y {
 			meyve.Relocation()
 			ilan.Health++
 		}
+
 		// Ilanin Collisionu Divarla
-		if ilan.Position_x < 0 || ilan.Position_x >= 40 || ilan.Position_y < 0 || ilan.Position_y >= 23 {
+		if ilan.Position_x < 0 || ilan.Position_x >= Width/GridSize || ilan.Position_y < 0 || ilan.Position_y >= Height/GridSize {
 			GameLoop = false
 		}
 
@@ -113,7 +133,8 @@ func main() {
 		// Draw the snake and Fruit
 		ilan.draw()
 		meyve.draw()
-		log.Println(ilan.Health) //Debuger
+		log.Println(ilan.Health) // Debugger
+
 		rl.EndDrawing()
 	}
 
