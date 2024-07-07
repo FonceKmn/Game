@@ -9,10 +9,10 @@ import (
 )
 
 const (
-	Width          int32 = 800 // 20 ye bolende gelir dushur 40
-	Height         int32 = 460 // 20 ye bolende gelir dushur 23
-	GridSize       int32 = 20  // GridSize Teyin edirik
-	UpdateInterval       = 0.5 // yarim saniye
+	Width          int32   = 800 // 20 ye bolende gelir dushur 40
+	Height         int32   = 460 // 20 ye bolende gelir dushur 23
+	GridSize       int32   = 20  // GridSize Teyin edirik
+	UpdateInterval float64 = 0.5 // yarim saniye
 )
 
 //-------------------------------Ilana Aid------------------------------------
