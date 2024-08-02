@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"time"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -12,33 +11,56 @@ const (
 	Width          int32   = 800 // 20 ye bolende gelir dushur 40
 	Height         int32   = 460 // 20 ye bolende gelir dushur 23
 	GridSize       int32   = 20  // GridSize Teyin edirik
-	UpdateInterval float64 = 0.5 // yarim saniye
+	UpdateInterval float64 = 0.1 // yarim saniye
 )
 
 //-------------------------------Ilana Aid------------------------------------
 
 // Define the Snake struct with Health, Position_x, and Position_y fields
+
+type Points struct { // Ilan qaqamizin kordinatlari ucun hoqqa veririk
+	x int32
+	y int32
+}
+
 type Snake struct {
-	Health     uint
+	Health     int
 	Position_x int32
 	Position_y int32
 	Direction  int32
+	Body       []Points
+}
+
+func (s *Snake) RemoveTail() { // Ilan qaqamizin quyrugunu arrayinin 0. indexini silir Head Len(bodyden) - ile iterasiya olunmalidi
+	s.Body = s.Body[1:len(s.Body)]
+}
+
+func (s *Snake) AddTail(x, y int32) { // Ilan qaqamizin quyrugu add olunur surushur effekti yaradir.
+	s.Body = append(s.Body, Points{x, y}) // ilana body elave eliyir
+
+	if s.Health < len(s.Body) { // eger ilanin bodysinin leni Healtshdan kicikdise silir.
+		s.RemoveTail()
+	}
 }
 
 func (snake *Snake) Ilan_move_up() {
 	snake.Position_y--
+	snake.AddTail(snake.Position_x, snake.Position_y)
 }
 
 func Ilan_move_down(ilan *Snake) {
 	ilan.Position_y++
+	ilan.AddTail(ilan.Position_x, ilan.Position_y)
 }
 
 func Ilan_move_right(ilan *Snake) {
 	ilan.Position_x++
+	ilan.AddTail(ilan.Position_x, ilan.Position_y)
 }
 
 func Ilan_move_left(ilan *Snake) {
 	ilan.Position_x--
+	ilan.AddTail(ilan.Position_x, ilan.Position_y)
 }
 
 func (s *Snake) move() {
@@ -56,6 +78,10 @@ func (s *Snake) move() {
 
 func (s *Snake) draw() {
 	rl.DrawRectangle(s.Position_x*GridSize, s.Position_y*GridSize, GridSize, GridSize, rl.Green)
+
+	for i := len(s.Body) - 1; i >= 0; i-- {
+		rl.DrawRectangle(s.Body[i].x*GridSize, s.Body[i].y*GridSize, GridSize, GridSize, rl.Green)
+	}
 }
 
 //-------------------------------Ilana Aid------------------------------------
@@ -83,7 +109,7 @@ func main() {
 	rl.InitWindow(Width, Height, "raylib [core] example - Ilan Oyunu")
 	defer rl.CloseWindow()
 
-	rl.SetTargetFPS(60)
+	rl.SetTargetFPS(30)
 
 	ilan := Snake{Health: 0, Position_x: 10, Position_y: 10, Direction: 1}
 	meyve := Meyve{Position_x: 14, Position_y: 15}
@@ -133,7 +159,7 @@ func main() {
 		// Draw the snake and Fruit
 		ilan.draw()
 		meyve.draw()
-		log.Println(ilan.Health) // Debugger
+		//log.Println(ilan.Health) // Debugger
 
 		rl.EndDrawing()
 	}
