@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"strconv"
 	"time"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -146,6 +146,9 @@ func main() {
 		if ilan.Position_x == meyve.Position_x && ilan.Position_y == meyve.Position_y {
 			meyve.Relocation()
 			ilan.Health++
+			title := "Ilan Oyunu | Health: " + strconv.Itoa(ilan.Health)
+			rl.SetWindowTitle(title)
+
 		}
 
 		// Ilanin Collisionu Divarla
@@ -171,14 +174,14 @@ func main() {
 		ilan.draw()
 		meyve.draw()
 		//log.Println(ilan.Health) // Debugger
-		log.Println(ilan.Position_x, ilan.Position_y, ilan.Body)
+		//log.Println(ilan.Position_x, ilan.Position_y, ilan.Body) //Debugger
 		rl.EndDrawing()
 	}
 
 	// Optional: Display a message before closing
 	rl.BeginDrawing()
 	rl.ClearBackground(rl.RayWhite)
-	rl.DrawText("Oyun Bitdi Siz Meglub Oldunuz...", 190, 200, 30, rl.Red)
+	rl.DrawText("Oyun Bitdi Siz Meglub Oldunuz... \n Umumi Xal: "+strconv.Itoa(ilan.Health), 190, 200, 30, rl.Red)
 	rl.EndDrawing()
 	time.Sleep(2 * time.Second) // Wait for 2 seconds to display the message
 }
