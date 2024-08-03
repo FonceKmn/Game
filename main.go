@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"time"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -77,7 +78,7 @@ func (s *Snake) move() {
 }
 
 func (s *Snake) draw() {
-	rl.DrawRectangle(s.Position_x*GridSize, s.Position_y*GridSize, GridSize, GridSize, rl.Green)
+	rl.DrawRectangle(s.Position_x*GridSize, s.Position_y*GridSize, GridSize, GridSize, rl.Red)
 
 	for i := len(s.Body) - 1; i >= 0; i-- {
 		rl.DrawRectangle(s.Body[i].x*GridSize, s.Body[i].y*GridSize, GridSize, GridSize, rl.Green)
@@ -152,6 +153,16 @@ func main() {
 			GameLoop = false
 		}
 
+		// Ilanin collusionu Ozuyle (2 olanda sonuncunu nezere almiriq (saniyede 3 defe check eliyir FPS 30 du deye))
+		if len(ilan.Body) > 2 {
+			for i := 0; i < len(ilan.Body)-1; i++ {
+				if ilan.Position_x == ilan.Body[i].x && ilan.Position_y == ilan.Body[i].y {
+					GameLoop = false
+					break
+				}
+			}
+		}
+
 		rl.BeginDrawing()
 
 		rl.ClearBackground(rl.RayWhite)
@@ -160,7 +171,7 @@ func main() {
 		ilan.draw()
 		meyve.draw()
 		//log.Println(ilan.Health) // Debugger
-
+		log.Println(ilan.Position_x, ilan.Position_y, ilan.Body)
 		rl.EndDrawing()
 	}
 
